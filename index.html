@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>音調圓盤</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0; /* 確保頁面邊緣沒有額外的邊距 */
+      }
+      header {
+        background-color: rgba(52, 152, 219, 0.8); /* 半透明藍色 */
+        color: white; /* 白色字體 */
+        text-align: center; /* 文字置中 */
+        padding: 15px; /* 內部邊距 */
+        width: 100%; /* 寬度滿版 */
+        position: fixed; /* 固定在最上方 */
+        top: 0; /* 距離上方 0 */
+        left: 0; /* 距離左邊 0 */
+        z-index: 1000; /* 確保在最上層 */
+      }
+
+      .circle {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 5px solid #ccc;
+        margin-top: 80px; /* 調整以避開 header */
+      }
+      .note {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid #000;
+        text-align: center;
+        line-height: 50px;
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        transition: background-color 0.5s ease; /* 增加漸變效果 */
+      }
+
+      select {
+        margin-bottom: 20px;
+      }
+      footer {
+        position: absolute;
+        bottom: 10px; /* 距離底部的距離 */
+        font-size: 14px; /* 字體大小 */
+        color: #666; /* 字體顏色 */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>音調圓盤</h1>
+      <p>選擇根音和模式以探索音樂的美妙</p>
+    </header>
+
+    <select id="rootNote" onchange="updateColors()">
+      <option value="">選擇根音</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="G">G</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+    </select>
+    <select id="mode" onchange="updateColors()">
+      <option value="">選擇模式</option>
+      <option value="Ionian">Ionian (大調)</option>
+      <option value="Dorian">Dorian (多利安)</option>
+      <option value="Phrygian">Phrygian (佛里吉亞)</option>
+      <option value="Lydian">Lydian (利底亞)</option>
+      <option value="Mixolydian">Mixolydian (混合利底亞)</option>
+      <option value="Aeolian">Aeolian (小調)</option>
+      <option value="Locrian">Locrian (洛克里亞)</option>
+    </select>
+
+    <div class="circle">
+      <div class="note C" onclick="colorCircle('C')">C</div>
+      <div class="note Csharp" onclick="colorCircle('Csharp')">C#</div>
+      <div class="note D" onclick="colorCircle('D')">D</div>
+      <div class="note Dsharp" onclick="colorCircle('Dsharp')">D#</div>
+      <div class="note E" onclick="colorCircle('E')">E</div>
+      <div class="note F" onclick="colorCircle('F')">F</div>
+      <div class="note Fsharp" onclick="colorCircle('Fsharp')">F#</div>
+      <div class="note G" onclick="colorCircle('G')">G</div>
+      <div class="note Gsharp" onclick="colorCircle('Gsharp')">G#</div>
+      <div class="note A" onclick="colorCircle('A')">A</div>
+      <div class="note Asharp" onclick="colorCircle('Asharp')">A#</div>
+      <div class="note B" onclick="colorCircle('B')">B</div>
+    </div>
+
+    <footer>Made by Xuna_0230_ X chatGPT</footer>
+
+    <script>
+      function setNotePositions() {
+        const notes = [
+          "C",
+          "Csharp",
+          "D",
+          "Dsharp",
+          "E",
+          "F",
+          "Fsharp",
+          "G",
+          "Gsharp",
+          "A",
+          "Asharp",
+          "B",
+        ];
+        const radius = 78; // 半徑，以 px 為單位
+        const circle = document.querySelector(".circle");
+        const circleSize = circle.offsetWidth; // 獲取圓形容器的大小（直徑）
+
+        notes.forEach((note, i) => {
+          const angle = ((2 * Math.PI) / notes.length) * i; // 計算角度
+          const x = 50 + ((radius * Math.cos(angle)) / (circleSize / 2)) * 100;
+          const y = 50 + ((radius * Math.sin(angle)) / (circleSize / 2)) * 100;
+
+          const noteElement = document.querySelector(`.${note}`);
+          noteElement.style.left = `${x}%`;
+          noteElement.style.top = `${y}%`;
+        });
+      }
+
+      function colorCircle(note) {
+        // 重設所有音階顏色
+        const notes = document.querySelectorAll(".note");
+        notes.forEach((el) => {
+          el.style.backgroundColor = "white"; // 或設為透明
+        });
+        // 改變被點擊的音階顏色
+        const selectedNote = document.querySelector(`.${note}`);
+        selectedNote.style.backgroundColor = "yellow"; // 你可以選擇其他顏色
+      }
+
+      function updateColors() {
+        const rootNote = document.getElementById("rootNote").value;
+        const mode = document.getElementById("mode").value;
+
+        // 清除所有顏色
+        const notes = document.querySelectorAll(".note");
+        notes.forEach((el) => {
+          el.style.backgroundColor = "white"; // 重設顏色
+        });
+
+        if (rootNote) {
+          colorCircle(rootNote); // 標記根音
+        }
+
+        if (mode) {
+          colorScale(rootNote, mode); // 根據選擇的模式上色
+        }
+      }
+
+      function colorScale(root, mode) {
+        const scales = {
+          Ionian: [0, 2, 4, 5, 7, 9, 11], // 大調音階
+          Dorian: [0, 2, 3, 5, 7, 9, 10], // 多利安
+          Phrygian: [0, 1, 3, 5, 7, 8, 10], // 佛里吉亞
+          Lydian: [0, 2, 4, 6, 7, 9, 11], // 利底亞
+          Mixolydian: [0, 2, 4, 5, 7, 9, 10], // 混合利底亞
+          Aeolian: [0, 2, 3, 5, 7, 8, 10], // 小調
+          Locrian: [0, 1, 3, 5, 6, 8, 10], // 洛克里亞
+        };
+
+        const notes = [
+          "C",
+          "Csharp",
+          "D",
+          "Dsharp",
+          "E",
+          "F",
+          "Fsharp",
+          "G",
+          "Gsharp",
+          "A",
+          "Asharp",
+          "B",
+        ];
+        const rootIndex = notes.indexOf(root);
+        const intervals = scales[mode];
+
+        intervals.forEach((interval) => {
+          const noteIndex = (rootIndex + interval) % notes.length;
+          const noteElement = document.querySelector(`.${notes[noteIndex]}`);
+          noteElement.style.backgroundColor = "lightgreen"; // 音階顏色
+        });
+      }
+
+      // 當頁面加載完畢後設置音符位置
+      window.onload = setNotePositions;
+    </script>
+  </body>
+</html>
